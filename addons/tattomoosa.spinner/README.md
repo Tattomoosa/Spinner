@@ -19,9 +19,9 @@
 	</h1>
 	<br/>
 	<br/>
-	<!-- <img src="./readme_images/demo.png" height="140">
-	<img src="./readme_images/stress_test.png" height="140">
-	<img src="./readme_images/editor_view.png" height="140"> -->
+	<img src="./promo/spinner-splash.png" height="180">
+	<img src="./promo/in-editor.png" height="180">
+	<!-- <img src="./readme_images/editor_view.png" height="140"> -->
 	<br/>
 	<br/>
 </div>

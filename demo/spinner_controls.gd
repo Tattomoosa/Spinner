@@ -27,7 +27,7 @@ func _ready():
 	diameter_slider.value = spinner.diameter
 	diameter_slider.value_changed.connect(
 		func(value: float):
-			spinner.diameter = value
+			spinner.custom_minimum_size = Vector2(value, value)
 	)
 	width_slider.value = spinner.border_width
 	width_slider.value_changed.connect(

@@ -27,27 +27,34 @@ grow_vertical = 2
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
 layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="Spinner" type="TextureProgressBar" parent="CenterContainer/PanelContainer/HBoxContainer"]
-custom_minimum_size = Vector2(16, 0)
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Spinner" type="TextureProgressBar" parent="CenterContainer/PanelContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_horizontal = 3
-value = 20.0
+value = 50.0
 script = ExtResource("1_4hpie")
-diameter = 16.0
 
-[node name="Label" type="Label" parent="CenterContainer/PanelContainer/HBoxContainer"]
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/HBoxContainer"]
 layout_mode = 2
-text = "Label"
+text = "A Label"
 
 [node name="PanelContainer" type="PanelContainer" parent="." node_paths=PackedStringArray("spinner")]
 layout_mode = 0
 offset_right = 14.0
 offset_bottom = 12.0
 script = ExtResource("2_foj1l")
-spinner = NodePath("../CenterContainer/PanelContainer/HBoxContainer/Spinner")
+spinner = NodePath("../CenterContainer/PanelContainer/MarginContainer/HBoxContainer/Spinner")
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 layout_mode = 2
@@ -120,7 +127,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-max_value = 1.0
+max_value = 0.25
 step = 0.001
 value = 0.01
 

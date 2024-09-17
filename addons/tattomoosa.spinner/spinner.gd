@@ -6,6 +6,8 @@ extends Range
 
 ## Status displayed by the Spinner
 enum Status {
+	## Only shows the background, useful if something hasn't started yet
+	EMPTY,
 	## Spinning, for indeterminate progress
 	SPINNING,
 	## Progressing, for determinate progress, set value elsewhere
@@ -16,9 +18,6 @@ enum Status {
 	WARNING,
 	## Success, for operations that errored
 	ERROR,
-	## Only shows the background, useful if something hasn't started yet
-	EMPTY,
-	## Unkown
 }
 
 ## Current status of the spinner
@@ -26,17 +25,6 @@ enum Status {
 	set(new_value):
 		status = new_value
 		_update_status()
-
-# TODO maybe this just extends range and has secret child TextureProgressBar so diameter can be set by parent containers and size etc
-## Spinner diameter
-@export_range(8, 256, 1.0) var diameter : float = 24:
-	set(value):
-		diameter = value
-		_background.radius = diameter / 2
-		_icon.radius = (diameter / 2) * icon_scale
-		_progress_border.radius = diameter / 2
-		_progress_border.stroke_width = border_width * diameter
-		queue_redraw()
 
 @export_group("Display Options")
 ## Whether or not to use icons during SUCCESS, WARNING, ERROR status
@@ -90,7 +78,8 @@ enum Status {
 @export_range(0.0, 1.0, 0.01) var icon_scale := 0.7:
 	set(value):
 		icon_scale = value
-		_icon.radius = (diameter / 2) * value
+		_icon.icon_scale = value
+		# _icon.radius = (diameter / 2) * value
 		_update_status()
 ## Icon to display when status is Status.SUCCESS
 @export var icon_success : Texture2D = preload("./icons/StatusSuccess.svg"):
@@ -108,6 +97,10 @@ enum Status {
 		icon_warning = value
 		_update_status()
 
+var diameter : float:
+	get():
+		return min(size.x, size.y)
+
 var _radial_initial_angle : float = 0.0
 
 var _background := _SpinnerSolidCircle.new()
@@ -123,19 +116,29 @@ func set_progressing(to_value: float):
 	value = to_value
 
 func _ready():
-	var radius := diameter / 2
-	_background.radius = radius
-	add_child(_background)
+	clip_contents = true
+	var external_children := get_children()
+	for child in get_children(true):
+		if child in external_children:
+			remove_child(child)
+			child.queue_free()
 
-	_icon.radius = radius * icon_scale
-	add_child(_icon)
+	# TODO not sure how to handle container sizing logic
+	if custom_minimum_size == Vector2.ZERO:
+		custom_minimum_size = Vector2(16, 16)
+	if size.x < custom_minimum_size.x:
+		size.x = custom_minimum_size.x
+	if size.y < custom_minimum_size.y:
+		size.y = custom_minimum_size.y
 
-	_progress_border.radius = radius
-	_progress_border.stroke_width = border_width * diameter
-	add_child(_progress_border)
+	add_child(_background, false, INTERNAL_MODE_FRONT)
+	add_child(_icon, false, INTERNAL_MODE_FRONT)
+	add_child(_progress_border, false, INTERNAL_MODE_FRONT)
+	_update_children_size()
 
 	value_changed.connect(queue_redraw.unbind(1))
-	resized.connect(_update_diameter_from_size)
+	# resized.connect(_update_children_size)
+	item_rect_changed.connect(_update_children_size)
 	_update_status()
 
 func _update_status():
@@ -177,18 +180,15 @@ func _update_status():
 	_update_colors()
 	queue_redraw()
 
-func _update_diameter_from_size():
-	diameter = min(size.x, size.y)
+func _update_children_size():
+	var radius := diameter / 2
+	_background.radius = radius
+	_icon.icon_scale = icon_scale
+	_icon.radius = radius
+	_progress_border.radius = radius
+	_progress_border.stroke_width = border_width * radius
 
 func _process(delta: float):
-	# if status != Status.SPINNING and status != Status.PROGRESSING:
-	# 	if icon_borderless or status == Status.EMPTY:
-	# 		value = min_value
-	# 	else:
-	# 		value = max_value
-	# 	_update_progress_border()
-	# 	return
-
 	if status == Status.SPINNING and (!Engine.is_editor_hint() or spin_preview_in_editor):
 		_radial_initial_angle += 360 * delta * spin_revolution_per_second
 		if _radial_initial_angle >= 360:
@@ -231,7 +231,7 @@ func _update_colors():
 			_progress_border.color = color
 
 func _should_use_editor_theme():
-	return Engine.is_editor_hint() and color_use_editor_theme and get_tree().edited_scene_root not in [self, owner]
+	return Engine.is_editor_hint() and color_use_editor_theme and get_tree() and get_tree().edited_scene_root not in [self, owner]
 
 func _get_color(theme_color_name: String, fallback: Color) -> Color:
 	var c := get_theme_color(theme_color_name)
@@ -243,6 +243,7 @@ func _get_color(theme_color_name: String, fallback: Color) -> Color:
 func _validate_property(property):
 	if property.name in [
 			"_radial_initial_angle",
+			"page"
 			]:
 		property.usage = PROPERTY_USAGE_NONE
 
@@ -254,6 +255,10 @@ class _SpinnerElement extends Control:
 	var radius := 32.0:
 		set(value):
 			radius = value
+			pivot_offset = Vector2.ZERO
+			position = Vector2.ZERO
+			size = Vector2(radius * 2, radius * 2)
+			# pivot_offset = Vector2(radius, radius)
 			queue_redraw()
 	func _init():
 		set_anchors_preset(PRESET_CENTER)
@@ -262,11 +267,12 @@ class _SpinnerSolidCircle extends _SpinnerElement:
 	func _draw():
 		if color == Color.TRANSPARENT:
 			return
-		draw_circle(Vector2.ZERO, radius, color, true)
+		draw_circle(Vector2(radius, radius), radius, color, true)
 
 # Draws solid circle if no icon
 class _SpinnerIcon extends _SpinnerSolidCircle:
 	var icon : Texture2D
+	var icon_scale : float
 
 	func _draw():
 		if color == Color.TRANSPARENT:
@@ -276,10 +282,11 @@ class _SpinnerIcon extends _SpinnerSolidCircle:
 			return
 		var diameter = radius * 2
 		var scale := Vector2(diameter / icon.get_size().x, diameter / icon.get_size().y)
-		draw_set_transform(Vector2.ZERO, 0, scale)
+		draw_set_transform(Vector2(radius, radius), 0, scale * icon_scale)
 		var pos := -icon.get_size() / 2.0
 		# draw_texture(icon, pos, fill_color)
 		draw_texture(icon, pos, color)
+		draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 
 class _SpinnerProgressBorder extends _SpinnerElement:
 	var stroke_width : float:
@@ -297,7 +304,7 @@ class _SpinnerProgressBorder extends _SpinnerElement:
 
 	func _draw():
 		draw_arc(
-			Vector2.ZERO,
+			Vector2(radius, radius),
 			radius - stroke_width,
 			deg_to_rad(start_angle - 90),
 			deg_to_rad(end_angle - 90),
