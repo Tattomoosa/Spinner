@@ -62,3 +62,7 @@ This will set the status to `PROGRESSING` if it isn't already as well as set the
 ### Borderless Icons
 
 If you set `icon_borderless`, you probably also want to set `icon_scale` to `1`.
+
+## My Other Godot Plugins
+
+[VisionCone3D](https://github.com/Tattomoosa/VisionCone3D)

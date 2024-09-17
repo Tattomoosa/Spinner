@@ -134,7 +134,10 @@ func _resize():
 
 func _process(delta: float):
 	if status != Status.SPINNING and status != Status.PROGRESSING:
-		value = max_value if !icon_borderless else min_value
+		if icon_borderless or status == Status.EMPTY:
+			value = min_value
+		else:
+			value = max_value
 		return
 
 	if status == Status.SPINNING and (!Engine.is_editor_hint() or spin_preview_in_editor):
