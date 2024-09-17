@@ -32,7 +32,7 @@ enum Status {
 @export var use_icons := true:
 	set(value):
 		use_icons = value
-		queue_redraw()
+		_update_status()
 ## Width of the spinning/static border
 @export_range(0.0, 0.3, 0.001) var border_width : float = 0.1:
 	set(value):
@@ -107,9 +107,7 @@ var _background := _SpinnerSolidCircle.new()
 var _icon := _SpinnerIcon.new()
 var _progress_border := _SpinnerProgressBorder.new()
 
-## Sets value and Status.PROGRESSING at the same time.
-##
-## Use this from callbacks.
+## Sets value and status to Status.PROGRESSING at the same time.
 func set_progressing(to_value: float):
 	if status != Status.PROGRESSING:
 		status = Status.PROGRESSING
@@ -146,40 +144,48 @@ func _update_status():
 	match status:
 		Status.SUCCESS:
 			var color := _get_color("success_color", color_success)
+			_icon.show()
 			_icon.color = color
-			_icon.icon = icon_success
+			_icon.icon = icon_success if use_icons else null
 			if !icon_borderless:
 				_progress_border.color = color
+				_progress_border.show()
 			else:
-				_progress_border.color = Color.TRANSPARENT
+				_progress_border.hide()
 		Status.ERROR:
 			var color := _get_color("error_color", color_error)
+			_icon.show()
 			_icon.color = color_error
-			_icon.icon = icon_error
+			_icon.icon = icon_error if use_icons else null
 			_progress_border.color = color_error
 			if !icon_borderless:
 				_progress_border.color = color
+				_progress_border.show()
 			else:
-				_progress_border.color = Color.TRANSPARENT
+				_progress_border.hide()
 		Status.WARNING:
+			_icon.show()
 			var color := _get_color("warning_color", color_warning)
 			_icon.color = color_warning
-			_icon.icon = icon_warning
+			_icon.icon = icon_warning if use_icons else null
 			if !icon_borderless:
 				_progress_border.color = color
+				_progress_border.show()
 			else:
-				_progress_border.color = Color.TRANSPARENT
+				_progress_border.hide()
 		Status.PROGRESSING:
+			_progress_border.show()
 			_radial_initial_angle = 0.0
-			_icon.color = Color.TRANSPARENT
+			_icon.hide()
 			_progress_border.color = _get_color("accent_color", color_progress)
 		Status.SPINNING:
+			_progress_border.show()
 			_radial_initial_angle = 0.0
-			_icon.color = Color.TRANSPARENT
+			_icon.hide()
 			_progress_border.color = _get_color("accent_color", color_progress)
 		Status.EMPTY:
-			_icon.color = Color.TRANSPARENT
-			_progress_border.color = Color.TRANSPARENT
+			_icon.hide()
+			_progress_border.hide()
 	queue_redraw()
 
 func _update_children_size():
@@ -290,7 +296,7 @@ class _SpinnerProgressBorder extends _SpinnerElement:
 			radius - stroke_width,
 			deg_to_rad(start_angle - 90),
 			deg_to_rad(end_angle - 90),
-			64, # TODO something with diameter?
+			radius * 2,
 			color,
 			stroke_width,
 			true

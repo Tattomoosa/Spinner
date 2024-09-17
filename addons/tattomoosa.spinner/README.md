@@ -32,13 +32,13 @@ Use to provide feedback on ongoing processes - threads, network requests, timers
 ## Features
 
 * 5 statuses
+	* `EMPTY` for a process that hasn't started
 	* `SPINNING` for indeterminate progress, such as a network request
 	* `PROGRESSING` for determinate progress, such as a timer or download with known message body size
 	* `SUCCESS` for a process that has completed successfully
 	* `WARNING` for a process that has completed successfully with warnings
 	* `ERROR` for a process that has errored out
-	* `EMPTY` for a process that hasn't started
-* Customizable icons, defaults taken from Godot's own icons
+* Can use custom icons, with defaults taken from Godot's own icons
 * Option to use no icon and fills with status color instead
 * Configurable spinner/border width and speed
 * Configurable colors and option to use editor theme
@@ -65,4 +65,4 @@ If you set `icon_borderless`, you probably also want to set `icon_scale` to `1`.
 
 ## My Other Godot Plugins
 
-[VisionCone3D](https://github.com/Tattomoosa/VisionCone3D)
+* [VisionCone3D](https://github.com/Tattomoosa/VisionCone3D)
