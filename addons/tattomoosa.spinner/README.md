@@ -62,16 +62,10 @@ If you set `icon_borderless`, you probably also want to set `icon_scale` to `1`.
 A very basic implementation.
 
 ``` go
-extends Control
-
-var spinner : Spinner
-var http_request : HTTPRequest
+@onready var spinner : Spinner = $Spinner
+@onready var http_request : HTTPRequest = $HTTPRequest
 
 func _ready() -> void:
-	http_request = HTTPRequest.new()
-	add_child(http_request)
-	spinner = Spinner.new()
-	add_child(spinner)
 	var error := http_request.request("https://github.com/godotengine/godot/releases/download/4.3-stable/godot-4.3-stable.tar.xz")
 	if error != OK:
 		spinner.status = Spinner.Status.ERROR
