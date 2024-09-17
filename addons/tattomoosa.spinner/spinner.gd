@@ -3,6 +3,8 @@
 class_name ProgressSpinner
 extends TextureProgressBar
 
+## Spinner which spins during loading and can also show operation results
+
 ## Status displayed by the ProgressSpinner
 enum Status {
 	## Spinning, for indeterminate progress
@@ -40,49 +42,68 @@ enum Status {
 			_resize()
 
 @export_group("Display Options")
+## Whether or not to use icons during SUCCESS, WARNING, ERROR status
 @export var use_icons := true:
 	set(value):
 		use_icons = value
 		queue_redraw()
+## Width of the spinning/static border
 @export_range(0.0, 1.0, 0.01) var border_width : float = 0.05:
 	set(value):
 		border_width = value
 		_resize()
 @export_subgroup("Spin", "spin_")
+## Percent filled by the border when the spinner is spinning
 @export_range(0.0, 1.0) var spin_fill_percent := 0.2
+## Speed of the spinning border during Status.SPINNING
 @export_range(0, 2) var spin_revolution_per_second := 0.5
+## Sets whether to animate border spin on Status.SPINNING or not
+@export var spin_preview_in_editor := true
 
 @export_subgroup("Colors", "color_")
+## Uses editor themes "color_success", "accent_color", "progress_color", "warning_color"
 @export var color_use_editor_theme := false
+## Color when status is Status.SUCCESS
 @export var color_success := Color(0.45, 0.95, 0.5):
 	set(value): color_success = value; _update_colors()
+## Color when status is Status.PROGRESSING or Status.SPINNING
 @export var color_progress := Color(0.44, 0.73, 0.98):
 	set(value): color_progress = value; _update_colors()
+## Color when status is Status.ERROR
 @export var color_error := Color(1, 0.47, 0.42):
 	set(value): color_error = value; _update_colors()
+## Color when status is Status.WARNING
 @export var color_warning := Color(1, 0.87, 0.4):
 	set(value): color_warning = value; _update_colors()
+## Background color
 @export var color_background := Color(0.0, 0.0, 0.0, 0.4):
 	set(value): color_background = value; _update_colors()
 
 @export_subgroup("Icons", "icon_")
+## Icon to display when status is Status.SUCCESS
 @export var icon_success : Texture2D = preload("./icons/StatusSuccess.svg"):
 	set(value):
 		icon_success = value
 		queue_redraw()
+## Icon to display when status is Status.ERROR
 @export var icon_error : Texture2D = preload("./icons/StatusError.svg"):
 	set(value):
 		icon_error = value
 		queue_redraw()
+## Icon to display when status is Status.WARNING
 @export var icon_warning : Texture2D = preload("./icons/StatusWarning.svg"):
 	set(value):
 		icon_warning = value
 		queue_redraw()
+## Scale (relative to diameter) to render icon
 @export_range(0.0, 1.0, 0.01) var icon_scale := 0.6:
 	set(value):
 		icon_scale = value
 		queue_redraw()
 
+## Sets value and Status.PROGRESSING at the same time.
+##
+## Use this from callbacks.
 func set_progressing(to_value: float):
 	if status != Status.PROGRESSING:
 		status = Status.PROGRESSING
@@ -104,7 +125,7 @@ func _process(delta: float):
 		value = max_value
 		return
 
-	if status == Status.SPINNING:
+	if status == Status.SPINNING and (!Engine.is_editor_hint() or spin_preview_in_editor):
 		value = max_value * spin_fill_percent
 		radial_initial_angle += 360 * delta * spin_revolution_per_second
 	else:
