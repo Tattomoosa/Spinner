@@ -16,6 +16,9 @@ enum Status {
 	WARNING,
 	## Success, for operations that errored
 	ERROR,
+	## Only shows the background, useful if something hasn't started yet
+	EMPTY,
+	## Unkown
 }
 
 ## Current status of the spinner
@@ -28,6 +31,8 @@ enum Status {
 				radial_initial_angle = 0.0
 			Status.SPINNING:
 				value = min_value + ((max_value - min_value) * spin_fill_percent)
+			Status.EMPTY:
+				value = min_value
 			_:
 				value = max_value
 		_update_colors()

@@ -34,9 +34,10 @@ Use to provide feedback on ongoing processes - threads, network requests, timers
 * 5 statuses
 	* `SPINNING` for indeterminate progress, such as a network request
 	* `PROGRESSING` for determinate progress, such as a timer or download with known message body size
-	* `SUCCESS` for a proces that has completed successfully
-	* `WARNING` for a proces that has completed successfully with warnings
-	* `ERROR` for a proces that has errored out
+	* `SUCCESS` for a process that has completed successfully
+	* `WARNING` for a process that has completed successfully with warnings
+	* `ERROR` for a process that has errored out
+	* `EMPTY` for a process that hasn't started
 * Customizable icons, defaults taken from Godot's own icons
 * Option to use no icon and fills with status color instead
 * Configurable spinner/border width and speed
