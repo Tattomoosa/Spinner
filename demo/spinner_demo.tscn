@@ -31,10 +31,12 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Spinner" type="TextureProgressBar" parent="CenterContainer/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
-size_flags_vertical = 4
+size_flags_horizontal = 3
 value = 20.0
 script = ExtResource("1_4hpie")
+diameter = 16.0
 
 [node name="Label" type="Label" parent="CenterContainer/PanelContainer/HBoxContainer"]
 layout_mode = 2
