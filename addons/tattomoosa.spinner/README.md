@@ -53,15 +53,43 @@ Add the Spinner node to your scene. All options update a live preview in the edi
 All options are documented in the Inspector panel. If anything isn't clear enough there,
 open an issue.
 
-### The Progressing Status
-
-Spinner's value will be overridden by all statuses except `PROGRESSING`.
-To set the progressing value, it's recommended to use `set_progressing()` instead.
-This will set the status to `PROGRESSING` if it isn't already as well as set the value.
-
 ### Borderless Icons
 
 If you set `icon_borderless`, you probably also want to set `icon_scale` to `1`.
+
+### Example: Watching an HTTPRequest
+
+A very basic implementation.
+
+``` go
+extends Control
+
+var spinner : Spinner
+var http_request : HTTPRequest
+
+func _ready() -> void:
+	http_request = HTTPRequest.new()
+	add_child(http_request)
+	spinner = Spinner.new()
+	add_child(spinner)
+	var error := http_request.request("https://github.com/godotengine/godot/releases/download/4.3-stable/godot-4.3-stable.tar.xz")
+	if error != OK:
+		spinner.status = Spinner.Status.ERROR
+	http_request.request_completed.connect(_on_request_completed)
+
+func _process(_delta: float) -> void:
+	if http_request.get_body_size() > 0 and http_request.get_http_client_status() != HTTPClient.STATUS_DISCONNECTED:
+		spinner.max_value = http_request.get_body_size()
+		spinner.set_progressing(http_request.get_downloaded_bytes())
+
+func _on_request_completed(
+	result: int,
+	response_code: int,
+	headers: PackedStringArray,
+	body: PackedByteArray
+) -> void:
+	spinner.status = Spinner.Status.SUCCESS
+```
 
 ## My Other Godot Plugins
 

@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://b30g68bawrqcq"]
+
+[sub_resource type="GDScript" id="GDScript_nbpu1"]
+script/source = "extends Control
+
+var spinner : Spinner
+var http_request : HTTPRequest
+
+func _ready() -> void:
+	http_request = HTTPRequest.new()
+	add_child(http_request)
+	spinner = Spinner.new()
+	add_child(spinner)
+	var error := http_request.request(\"https://github.com/godotengine/godot/releases/download/4.3-stable/godot-4.3-stable.tar.xz\")
+	if error != OK:
+		spinner.status = Spinner.Status.ERROR
+	http_request.request_completed.connect(_on_request_completed)
+
+func _process(_delta: float) -> void:
+	if http_request.get_body_size() > 0 and http_request.get_http_client_status() != HTTPClient.STATUS_DISCONNECTED:
+		spinner.max_value = http_request.get_body_size()
+		spinner.set_progressing(http_request.get_downloaded_bytes())
+
+func _on_request_completed(
+	result: int,
+	response_code: int,
+	headers: PackedStringArray,
+	body: PackedByteArray
+) -> void:
+	spinner.status = Spinner.Status.SUCCESS
+"
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_nbpu1")
