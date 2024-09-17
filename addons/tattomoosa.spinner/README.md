@@ -53,6 +53,17 @@ Add the Spinner node to your scene. All options update a live preview in the edi
 All options are documented in the Inspector panel. If anything isn't clear enough there,
 open an issue.
 
+### Basic Usage
+
+Set `status` to the desired status indication setting. Spinner is a range node, and
+can have its `min_value`, `max_value` and `value` updated accordingly, but those values
+only affect its border fill when `status` is `Status.Progressing`.
+
+To set `value` to a new value and `status` to `Status.Progressing` at the same time,
+use `set_progressing(value)`. This function can be connected to a signal for easy updates,
+but be aware that when `value == max_value` Spinner will not automatically update to `Status.SUCCESS`,
+that has to be set separately.
+
 ### Borderless Icons
 
 If you set `icon_borderless`, you probably also want to set `icon_scale` to `1`.
@@ -84,6 +95,24 @@ func _on_request_completed(
 ) -> void:
 	spinner.status = Spinner.Status.SUCCESS
 ```
+
+## The Future
+
+I primarily intend to use this to watch network requests, thread execution, etc.
+I am considering bundling extended classes which do this as-expected and have
+optional labels, but in its current state it is fairly simple to hook up to these
+manually. Let me know if there's interest in the following (or other) pre-built
+solutions:
+
+* HTTPRequestSpinner
+* ThreadSpinner
+* ValueSpinner
+	* Connect to any `value_changed`-type Signal, auto-SUCCESS upon completion)
+
+The main thing holding me back from including this is it feels a bit like clutter
+and any plugin-side implementation should be really robust.
+
+Let me know if there's interest!
 
 ## My Other Godot Plugins
 
