@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dm787obh5b8nt"]
 
 [ext_resource type="Script" path="res://addons/tattomoosa.spinner/spinner.gd" id="1_m4soy"]
-[ext_resource type="Texture2D" uid="uid://dhxxhve2a0ntu" path="res://promo/icon.png" id="2_6d571"]
+[ext_resource type="Texture2D" uid="uid://d0dp465r86yka" path="res://promo/icon.png" id="2_6d571"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -2112,26 +2112,28 @@ status = 5
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
-offset_left = 524.0
-offset_top = 123.0
-offset_right = 765.0
-offset_bottom = 224.0
+offset_left = 523.0
+offset_top = 88.0
+offset_right = 764.0
+offset_bottom = 189.0
+theme_override_colors/font_color = Color(0.556863, 0.937255, 0.592157, 1)
 theme_override_font_sizes/font_size = 64
 text = "Spinner"
 
 [node name="Label2" type="Label" parent="."]
 layout_mode = 0
-offset_left = 593.0
-offset_top = 206.0
-offset_right = 714.0
-offset_bottom = 247.0
+offset_left = 595.0
+offset_top = 155.0
+offset_right = 716.0
+offset_bottom = 196.0
 theme_override_font_sizes/font_size = 24
 text = "For Godot"
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 447.0
-offset_top = 141.0
-offset_right = 511.0
-offset_bottom = 205.0
+offset_left = 456.0
+offset_top = 108.0
+offset_right = 517.0
+offset_bottom = 169.0
 texture = ExtResource("2_6d571")
+expand_mode = 1

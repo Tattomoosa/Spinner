@@ -9,7 +9,7 @@
 		<sub>
 		<sub>
 		<sub>
-		Simple but configurable process status indicator node for <a href="https://godotengine.org/">Godot</a>
+		Simple but configurable process status indicator node, for <a href="https://godotengine.org/">Godot</a>
 		</sub>
 		</sub>
 		</sub>

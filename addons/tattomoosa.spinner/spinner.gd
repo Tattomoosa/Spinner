@@ -52,19 +52,19 @@ enum Status {
 @export var color_use_editor_theme := false
 ## Color when status is Status.SUCCESS
 @export var color_success := Color(0.45, 0.95, 0.5):
-	set(value): color_success = value; _update_colors()
+	set(value): color_success = value; _update_status()
 ## Color when status is Status.PROGRESSING or Status.SPINNING
 @export var color_progress := Color(0.44, 0.73, 0.98):
-	set(value): color_progress = value; _update_colors()
+	set(value): color_progress = value; _update_status()
 ## Color when status is Status.ERROR
 @export var color_error := Color(1, 0.47, 0.42):
-	set(value): color_error = value; _update_colors()
+	set(value): color_error = value; _update_status()
 ## Color when status is Status.WARNING
 @export var color_warning := Color(1, 0.87, 0.4):
-	set(value): color_warning = value; _update_colors()
+	set(value): color_warning = value; _update_status()
 ## Background color
 @export var color_background := Color(0.0, 0.0, 0.0, 0.4):
-	set(value): color_background = value; _update_colors()
+	set(value): color_background = value; _update_status()
 
 @export_subgroup("Icons", "icon_")
 ## Whether or not to draw the spinning indicator in non-PROGRESSING/SPINNING statuses
@@ -142,42 +142,44 @@ func _ready():
 	_update_status()
 
 func _update_status():
+	_background.color = color_background
 	match status:
 		Status.SUCCESS:
-			_icon.color = color_success
+			var color := _get_color("success_color", color_success)
+			_icon.color = color
 			_icon.icon = icon_success
-			_progress_border.color = color_success
-			if icon_borderless:
-				_progress_border.color = color_warning
+			if !icon_borderless:
+				_progress_border.color = color
 			else:
 				_progress_border.color = Color.TRANSPARENT
 		Status.ERROR:
+			var color := _get_color("error_color", color_error)
 			_icon.color = color_error
 			_icon.icon = icon_error
 			_progress_border.color = color_error
-			if icon_borderless:
-				_progress_border.color = color_warning
+			if !icon_borderless:
+				_progress_border.color = color
 			else:
 				_progress_border.color = Color.TRANSPARENT
 		Status.WARNING:
+			var color := _get_color("warning_color", color_warning)
 			_icon.color = color_warning
 			_icon.icon = icon_warning
-			if icon_borderless:
-				_progress_border.color = color_warning
+			if !icon_borderless:
+				_progress_border.color = color
 			else:
 				_progress_border.color = Color.TRANSPARENT
 		Status.PROGRESSING:
 			_radial_initial_angle = 0.0
 			_icon.color = Color.TRANSPARENT
-			_progress_border.color = color_progress
+			_progress_border.color = _get_color("accent_color", color_progress)
 		Status.SPINNING:
 			_radial_initial_angle = 0.0
 			_icon.color = Color.TRANSPARENT
-			_progress_border.color = color_progress
+			_progress_border.color = _get_color("accent_color", color_progress)
 		Status.EMPTY:
 			_icon.color = Color.TRANSPARENT
 			_progress_border.color = Color.TRANSPARENT
-	_update_colors()
 	queue_redraw()
 
 func _update_children_size():
@@ -210,25 +212,6 @@ func _update_progress_border():
 			v = max_value
 	_progress_border.start_angle = _radial_initial_angle
 	_progress_border.end_angle = _radial_initial_angle  + lerp(0, 360, float(v - min_value) / float(max_value - min_value))
-
-func _update_colors():
-	_background.color = color_background
-	match status:
-		Status.PROGRESSING, Status.SPINNING:
-			var color := _get_color("accent_color", color_progress)
-			_progress_border.color = color
-		Status.SUCCESS:
-			var color := _get_color("success_color", color_success)
-			_icon.color = color
-			_progress_border.color = color
-		Status.WARNING:
-			var color := _get_color("warning_color", color_warning)
-			_icon.color = color
-			_progress_border.color = color
-		Status.ERROR:
-			var color := _get_color("error_color", color_error)
-			_icon.color = color
-			_progress_border.color = color
 
 func _should_use_editor_theme():
 	return Engine.is_editor_hint() and color_use_editor_theme and get_tree() and get_tree().edited_scene_root not in [self, owner]
@@ -284,7 +267,6 @@ class _SpinnerIcon extends _SpinnerSolidCircle:
 		var scale := Vector2(diameter / icon.get_size().x, diameter / icon.get_size().y)
 		draw_set_transform(Vector2(radius, radius), 0, scale * icon_scale)
 		var pos := -icon.get_size() / 2.0
-		# draw_texture(icon, pos, fill_color)
 		draw_texture(icon, pos, color)
 		draw_set_transform(Vector2.ZERO, 0, Vector2.ONE)
 
