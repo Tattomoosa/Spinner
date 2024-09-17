@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bilglsx04yfsi"]
 
 [ext_resource type="Script" path="res://addons/tattomoosa.spinner/spinner.gd" id="1_4hpie"]
-[ext_resource type="Script" path="res://addons/demo/spinner_controls.gd" id="2_foj1l"]
+[ext_resource type="Script" path="res://demo/spinner_controls.gd" id="2_foj1l"]
 
 [sub_resource type="Theme" id="Theme_jq757"]
 
@@ -35,7 +35,6 @@ layout_mode = 2
 size_flags_vertical = 4
 value = 20.0
 script = ExtResource("1_4hpie")
-spin_preview_in_editor = false
 
 [node name="Label" type="Label" parent="CenterContainer/PanelContainer/HBoxContainer"]
 layout_mode = 2

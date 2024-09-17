@@ -1,6 +1,6 @@
 extends PanelContainer
 
-@export var spinner : ProgressSpinner
+@export var spinner : Spinner
 
 @onready var menu_button : MenuButton = %StatusSelectorButton
 @onready var progressing_slider : HSlider = %ProgressingValueSlider
@@ -9,20 +9,20 @@ extends PanelContainer
 @onready var icon_scale_slider : HSlider = %IconScaleSlider
 
 func _ready():
-	menu_button.text = ProgressSpinner.Status.keys()[spinner.status]
-	for status in ProgressSpinner.Status.keys():
+	menu_button.text = Spinner.Status.keys()[spinner.status]
+	for status in Spinner.Status.keys():
 		menu_button.get_popup().add_item(status)
 	menu_button.get_popup().id_pressed.connect(
 		func(value: int):
-			spinner.status = value as ProgressSpinner.Status
-			menu_button.text = ProgressSpinner.Status.keys()[value]
-			if spinner.status == ProgressSpinner.Status.PROGRESSING:
+			spinner.status = value as Spinner.Status
+			menu_button.text = Spinner.Status.keys()[value]
+			if spinner.status == Spinner.Status.PROGRESSING:
 				spinner.value = progressing_slider.value
 	)
 	progressing_slider.value_changed.connect(
 		func(value: float):
 			spinner.set_progressing(value)
-			menu_button.text = ProgressSpinner.Status.keys()[ProgressSpinner.Status.PROGRESSING]
+			menu_button.text = Spinner.Status.keys()[Spinner.Status.PROGRESSING]
 	)
 	diameter_slider.value = spinner.diameter
 	diameter_slider.value_changed.connect(

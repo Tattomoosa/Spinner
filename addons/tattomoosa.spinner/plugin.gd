@@ -20,10 +20,10 @@ func _exit_tree():
 
 class SpinnerEditorInspector extends EditorInspectorPlugin:
 	func _can_handle(object):
-		return object is ProgressSpinner
+		return object is Spinner
 	
 	func _parse_property(object, type, name, hint_type, hint_string, usage_flags, wide):
-		var spinner := object as ProgressSpinner
+		var spinner := object as Spinner
 		if name == "nine_patch_stretch":
 			return true
 		if name == "color_use_editor_theme":
@@ -46,7 +46,7 @@ class SpinnerEditorInspector extends EditorInspectorPlugin:
 				return true
 	
 	func _parse_group(object, group):
-		var spinner := object as ProgressSpinner
+		var spinner := object as Spinner
 
 	class SpinnerColorsProperty extends EditorProperty:
 		var property_control := CheckBox.new()
@@ -60,7 +60,7 @@ class SpinnerEditorInspector extends EditorInspectorPlugin:
 			property_control.toggled.connect(toggled)
 		
 		func toggled(value: bool):
-			var spinner : ProgressSpinner = get_edited_object()
+			var spinner : Spinner = get_edited_object()
 			spinner.color_use_editor_theme = value
 			if value:
 				spinner.color_success = property_control.get_theme_color("success_color", "Editor")

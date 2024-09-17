@@ -1,11 +1,10 @@
 @tool
-@icon("./icons/ProgressSpinner.svg")
-class_name ProgressSpinner
+@icon("./icons/Spinner.svg")
+class_name Spinner
 extends TextureProgressBar
-
 ## Spinner which spins during loading and can also show operation results
 
-## Status displayed by the ProgressSpinner
+## Status displayed by the Spinner
 enum Status {
 	## Spinning, for indeterminate progress
 	SPINNING,
@@ -33,8 +32,9 @@ enum Status {
 				value = max_value
 		_update_colors()
 		queue_redraw()
-## Spinner diameter
+
 # TODO maybe this just extends range and has secret child TextureProgressBar so diameter can be set by parent containers and size etc
+## Spinner diameter
 @export_range(8, 256, 1.0) var diameter : float = 24:
 	set(value):
 		diameter = value
@@ -80,6 +80,18 @@ enum Status {
 	set(value): color_background = value; _update_colors()
 
 @export_subgroup("Icons", "icon_")
+## Whether or not to draw the spinning indicator in non-PROGRESSING/SPINNING statuses
+##
+## Best paired with a circular icon at icon_scale = 1.0, so icons fill the whole control
+@export var icon_borderless := false:
+	set(value):
+		icon_borderless = value
+		icon_scale = 1.0
+## Scale (relative to diameter) to render icon
+@export_range(0.0, 1.0, 0.01) var icon_scale := 0.6:
+	set(value):
+		icon_scale = value
+		queue_redraw()
 ## Icon to display when status is Status.SUCCESS
 @export var icon_success : Texture2D = preload("./icons/StatusSuccess.svg"):
 	set(value):
@@ -94,11 +106,6 @@ enum Status {
 @export var icon_warning : Texture2D = preload("./icons/StatusWarning.svg"):
 	set(value):
 		icon_warning = value
-		queue_redraw()
-## Scale (relative to diameter) to render icon
-@export_range(0.0, 1.0, 0.01) var icon_scale := 0.6:
-	set(value):
-		icon_scale = value
 		queue_redraw()
 
 ## Sets value and Status.PROGRESSING at the same time.
@@ -122,7 +129,7 @@ func _resize():
 
 func _process(delta: float):
 	if status != Status.SPINNING and status != Status.PROGRESSING:
-		value = max_value
+		value = max_value if !icon_borderless else min_value
 		return
 
 	if status == Status.SPINNING and (!Engine.is_editor_hint() or spin_preview_in_editor):

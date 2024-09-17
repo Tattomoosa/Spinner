@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ox82pp12w4i4"
-path="res://.godot/imported/ProgressSpinner.svg-e74cada1c455e63bb1aad60cabd6587d.ctex"
+path="res://.godot/imported/Spinner.svg-05c0090370c41ed3fd816447fc3fc3e0.ctex"
 metadata={
 "has_editor_variant": true,
 "vram_texture": false
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://addons/tattomoosa.spinner/icons/ProgressSpinner.svg"
-dest_files=["res://.godot/imported/ProgressSpinner.svg-e74cada1c455e63bb1aad60cabd6587d.ctex"]
+source_file="res://addons/tattomoosa.spinner/icons/Spinner.svg"
+dest_files=["res://.godot/imported/Spinner.svg-05c0090370c41ed3fd816447fc3fc3e0.ctex"]
 
 [params]
 
