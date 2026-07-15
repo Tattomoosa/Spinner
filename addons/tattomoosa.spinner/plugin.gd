@@ -43,6 +43,7 @@ class SpinnerEditorInspector extends EditorInspectorPlugin:
 		if spinner.color_use_editor_theme:
 			if name.begins_with("color_"):
 				return true
+		return false
 	
 	func _parse_group(object, group):
 		var spinner := object as Spinner
